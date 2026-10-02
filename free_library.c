@@ -44,6 +44,7 @@ int  page      = 0;
 int  have_results = 0;
 int  first_ui  = 1;
 int  st_pending = 0; // selftest marker, written on the next frame
+int  settings_open = -1; // API keys panel: -1 not decided yet, then 0/1 (-1 opens it when a key is missing)
 
 char *status     = "Free Library ready.";
 char *page_label = "";
@@ -104,6 +105,7 @@ string_array_t *src_items  = NULL;
 string_array_t *type_items = NULL;
 string_array_t *qual_items = NULL;
 string_array_t *sf_lic_items = NULL;
+f32_array_t *row1       = NULL;
 f32_array_t *row3       = NULL;
 f32_array_t *row_search = NULL;
 f32_array_t *row_res    = NULL;
@@ -1100,7 +1102,8 @@ void start_download(char *id) {
 	}
 	else if (dl_src == 3) {
 		if (string_equals(SKETCHFAB_TOKEN, "")) {
-			set_status("Set SKETCHFAB_TOKEN in data/.env (sketchfab.com/settings -> API token)");
+			settings_open = 1;
+			set_status("Open Settings and paste your free Sketchfab token");
 			dl_busy = 0;
 			st_marker();
 			return;
@@ -1175,7 +1178,8 @@ void fetch_results() {
 	}
 	else if (src_sel == 2) {
 		if (string_equals(POLY_PIZZA_KEY, "")) {
-			set_status("Set POLY_PIZZA_KEY in data/.env - free key at poly.pizza/settings/api");
+			settings_open = 1;
+			set_status("Open Settings and paste your free poly.pizza key");
 			st_marker();
 			return;
 		}
@@ -1244,6 +1248,20 @@ void do_search() {
 		page_curs->buffer[0] = string("");
 	}
 	fetch_results();
+}
+
+// ---- settings persistence (GUI writes the .env back out) ----
+
+void save_env() {
+	char *path = string("%s.env", path_data());
+	char *body = string("LIB_ROOT=%s\nTHUMB_DIR=%s\nPOLY_PIZZA_KEY=%s\nSKETCHFAB_TOKEN=%s\n", LIB_ROOT, THUMB_DIR, POLY_PIZZA_KEY, SKETCHFAB_TOKEN);
+	iron_file_save_bytes(path, sys_string_to_buffer(body), string_length(body));
+	if (iron_file_size(path) >= 0) {
+		set_status("Settings saved to data/.env");
+	}
+	else {
+		set_status("Could not save settings - check folder permissions");
+	}
 }
 
 // ---- UI ----
@@ -1358,6 +1376,41 @@ void on_ui() {
 	}
 	if (ui_button("Blendkit", UI_ALIGN_CENTER, "")) {
 		file_start("https://www.blendkit.com");
+	}
+
+	// ---- settings / API keys - GUI setup, no file editing needed ----
+	if (settings_open < 0) {
+		// first run: open the panel as long as a key is missing
+		settings_open = 0;
+		if (string_equals(POLY_PIZZA_KEY, "") || string_equals(SKETCHFAB_TOKEN, "")) {
+			settings_open = 1;
+		}
+	}
+	char *set_label = "Settings";
+	if (settings_open) {
+		set_label = "Close Settings";
+	}
+	ui_row(row1);
+	if (ui_button(set_label, UI_ALIGN_CENTER, "")) {
+		settings_open = 1 - settings_open;
+	}
+	if (settings_open) {
+		ui_text("Keys are optional - Poly Haven, ambientCG", 0, 0);
+		ui_text("and Blendkit work without any key.", 0, 0);
+		ui_row(row1);
+		ui_text_input(&POLY_PIZZA_KEY, "poly.pizza key (free)", UI_ALIGN_LEFT, true, true);
+		ui_row(row1);
+		ui_text_input(&SKETCHFAB_TOKEN, "Sketchfab token (free)", UI_ALIGN_LEFT, true, true);
+		ui_row(row3);
+		if (ui_button("Get poly.pizza key", UI_ALIGN_CENTER, "")) {
+			file_start("https://poly.pizza/settings/api");
+		}
+		if (ui_button("Get Sketchfab key", UI_ALIGN_CENTER, "")) {
+			file_start("https://sketchfab.com/settings/password");
+		}
+		if (ui_button("Save", UI_ALIGN_CENTER, "")) {
+			save_env();
+		}
 	}
 
 	ui_text(status, 0, 0);
@@ -1531,6 +1584,8 @@ void main() {
 	row_res->buffer[0] = 0.14;
 	row_res->buffer[1] = 0.56;
 	row_res->buffer[2] = 0.30;
+	row1 = f32_array_create(1);
+	row1->buffer[0] = 1.0;
 
 	iron_create_directory(THUMB_DIR);
 	iron_create_directory(LIB_ROOT);
