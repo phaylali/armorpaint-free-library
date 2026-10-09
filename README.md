@@ -107,3 +107,30 @@ The first result is downloaded and imported; the run ends with
 
 MIT — see [LICENSE](LICENSE). Downloaded assets keep their own licenses;
 that is why `credits.txt` is written next to every download.
+
+## Connect With Us
+
+- [Discord](https://discord.omniversify.com) — Join our community
+- [X/Twitter](https://twitter.com/omniversify) — Follow updates
+- [GitHub](https://github.com/phaylali) — Explore our work
+- [RSS Feed](/rss.xml) — Subscribe to updates
+
+## Support Us
+
+<p align="center">
+  <a href="https://ko-fi.com/omniversify">
+    <img src="https://raw.githubusercontent.com/phaylali/Omniversify/main/public/images/kofi_logo.svg" width="200" alt="Ko-Fi" />
+  </a>
+</p>
+
+<p align="center">
+  <strong>Keep us going</strong>
+</p>
+
+---
+
+Licensed under [MIT](LICENSE).
+
+_Made by Moroccans, for the Omniverse_
+
+[![ReadMeSupportPalestine](https://raw.githubusercontent.com/Safouene1/support-palestine-banner/master/banner-project.svg)](https://donate.unrwa.org/-landing-page/en_EN)
