@@ -105,7 +105,7 @@ The first result is downloaded and imported; the run ends with
 
 ## License
 
-MIT — see [LICENSE](LICENSE). Downloaded assets keep their own licenses;
+Released into the public domain under [The Unlicense](LICENSE.md). Downloaded assets keep their own licenses;
 that is why `credits.txt` is written next to every download.
 
 ## Connect With Us
@@ -129,7 +129,7 @@ that is why `credits.txt` is written next to every download.
 
 ---
 
-Licensed under [MIT](LICENSE).
+Licensed under [The Unlicense](LICENSE.md) — public domain dedication.
 
 _Made by Moroccans, for the Omniverse_
 
